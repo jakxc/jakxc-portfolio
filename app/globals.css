@@ -1,26 +1,477 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Legacy tokens: still used by Navbar and other pages */
+  --color-dex-red: #d8302a;
+  --color-dex-red-deep: #a3201c;
+  --color-dex-red-dark: #731713;
+  --color-screen: #1b2e24;
+  --color-screen-light: #c9ddb5;
+  --color-lcd: #9bc46a;
+  --color-cream: #f2f0e8;
+  --color-panel: #ebe8df;
+  --color-ink: #1d2320;
+  --color-cyan: #3fa9db;
+  --color-cyan-deep: #1f6f96;
+  --color-lens-rim: #2d6fa3;
+  --color-gold: #d9ae46;
+  --color-gold-deep: #a9802c;
+  --color-yellow: #f6d94c;
+  --color-green-led: #4caf50;
+  --color-grey: #33363a;
+  --color-chrome: #d7d7d2;
+
+  /* Game Boy Color (yellow edition) */
+  --color-gbc-yellow: #f4c63a;
+  --color-gbc-yellow-light: #fbe27a;
+  --color-gbc-yellow-deep: #d9a521;
+  --color-gbc-yellow-dark: #9a6f08;
+  --color-gbc-ink: #3b2a04;
+  --color-gbc-bezel: #2b2b31;
+  --color-gbc-bezel-text: #c9c9d1;
+  --color-gbc-lcd: #cfd9b4;
+  --color-gbc-lcd-mid: #4a6234;
+  --color-gbc-lcd-ink: #1f2a1a;
+  --color-gbc-lcd-light: #e9f0d2;
+  --color-btn-dpad: #2b3fd1;
+  --color-btn-a: #d9302c;
+  --color-btn-b: #22a03f;
+  --color-orange: #f08a24;
+  --color-purple: #8a3fc0;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--color-cream);
+  --color-foreground: var(--color-ink);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono-dex: var(--font-mono-dex);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display), serif;
+  letter-spacing: 0.01em;
+}
+
+.font-dex {
+  font-family: var(--font-mono-dex), monospace;
+  letter-spacing: 0.04em;
+}
+
+.text-xxs {
+  font-size: 0.85rem;
+  line-height: 1rem;
+}
+
+.white-space-pre-line {
+  white-space: pre-line;
+}
+
+/* ───────── Game Boy Color shell ───────── */
+
+/* Yellow plastic body: small top corners, big bottom-right curve */
+.gbc-shell {
+  background: var(--color-gbc-yellow);
+  border: 3px solid var(--color-gbc-yellow-dark);
+  border-radius: 1.25rem 1.25rem 3.5rem 1.25rem;
+  box-shadow:
+    inset 3px 3px 0 rgba(255, 255, 255, 0.35),
+    inset -4px -5px 0 rgba(0, 0, 0, 0.12),
+    0 24px 32px -16px rgba(0, 0, 0, 0.5);
+}
+
+/* Dark screen bezel with rounded bottom corners */
+.gbc-bezel {
+  background: var(--color-gbc-bezel);
+  border-radius: 0.5rem 0.5rem 2rem 2rem;
+  padding: 0.75rem 1.25rem 1rem;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.06),
+    0 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Pale green LCD with a faint pixel grid */
+.gbc-lcd {
+  height: 24rem;
+  position: relative;
+  overflow: hidden;
+  background: var(--color-gbc-lcd);
+  border: 3px solid #14141a;
+  border-radius: 0.25rem;
+  box-shadow:
+    inset 0 0 0 2px rgba(0, 0, 0, 0.12),
+    inset 0 8px 14px -6px rgba(0, 0, 0, 0.3);
+}
+
+.gbc-lcd::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+  background-size: 3px 3px;
+}
+
+/* Power LED */
+.gbc-led {
+  display: inline-block;
+  border-radius: 9999px;
+  box-shadow: 0 0 6px 1px currentColor;
+}
+
+/* Blue D-pad: cross shape cut with clip-path, shadow on the wrapper */
+.gbc-dpad {
+  position: relative;
+  width: 5rem;
+  height: 5rem;
+  filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.3));
+}
+
+.gbc-dpad > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-btn-dpad);
+  background-image: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0.28) 0 12%,
+    transparent 13%
+  );
+  clip-path: polygon(
+    33.3% 0,
+    66.7% 0,
+    66.7% 33.3%,
+    100% 33.3%,
+    100% 66.7%,
+    66.7% 66.7%,
+    66.7% 100%,
+    33.3% 100%,
+    33.3% 66.7%,
+    0 66.7%,
+    0 33.3%,
+    33.3% 33.3%
+  );
+}
+
+/* D-pad: invisible up/down keys laid over the cross arms */
+.gbc-dpad-key {
+  position: absolute;
+  background: transparent;
+  cursor: pointer;
+}
+
+.gbc-dpad-key:active {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.gbc-dpad-key:focus-visible {
+  outline: 2px solid var(--color-gbc-yellow-light);
+  outline-offset: -2px;
+}
+
+.gbc-dpad-key:disabled {
+  cursor: default;
+}
+
+/* SELECT pill as a real button, with a bigger tap target */
+.gbc-pill-btn {
+  position: relative;
+  cursor: pointer;
+}
+
+.gbc-pill-btn::before {
+  content: "";
+  position: absolute;
+  inset: -0.8rem -0.4rem;
+}
+
+.gbc-pill-btn:active,
+.gbc-pill-btn[aria-expanded="true"] {
+  transform: rotate(-25deg) translateY(2px);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.gbc-pill-btn:focus-visible {
+  outline: 2px solid var(--color-gbc-ink);
+  outline-offset: 3px;
+}
+
+/* In-screen start menu */
+.gbc-menu {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 10;
+  min-width: 10.5rem;
+  padding: 0.5rem 0.75rem 0.5rem 0.25rem;
+  background: var(--color-gbc-lcd-light);
+  border: 3px solid var(--color-gbc-lcd-ink);
+  border-radius: 0.375rem;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.25);
+}
+
+.gbc-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.375rem 0.25rem;
+  color: var(--color-gbc-lcd-ink);
+  font-family: var(--font-body), serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.gbc-menu-item:focus-visible {
+  outline: none;
+}
+
+/* Right-pointing cursor triangle (pure CSS, so no font glyph needed) */
+.gbc-cursor {
+  display: inline-block;
+  flex: none;
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 8px solid var(--color-gbc-lcd-ink);
+}
+
+/* Round A / B buttons */
+.gbc-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 9999px;
+  border: 3px solid var(--gbc-btn-dark);
+  background: var(--gbc-btn);
+  color: rgba(0, 0, 0, 0.4);
+  font-family: var(--font-body), serif;
+  font-size: 0.75rem;
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.25),
+    0 4px 0 var(--gbc-btn-dark),
+    0 6px 8px rgba(0, 0, 0, 0.25);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.gbc-btn-letter {
+  --nudge-x: 0.08em;
+  --nudge-y: -0.2em;
+  display: block;
+  transform: translate(var(--nudge-x), var(--nudge-y));
+}
+
+.gbc-btn-a {
+  --gbc-btn: var(--color-btn-a);
+  --gbc-btn-dark: #8f1d1a;
+}
+
+.gbc-btn-b {
+  --gbc-btn: var(--color-btn-b);
+  --gbc-btn-dark: #14692a;
+}
+
+/* Press effect when the parent link is hovered or focused */
+.group:hover .gbc-btn,
+.group:focus-visible .gbc-btn {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.25),
+    0 2px 0 var(--gbc-btn-dark),
+    0 3px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* SELECT / START pills */
+.gbc-pill {
+  display: block;
+  width: 2.75rem;
+  height: 0.75rem;
+  border-radius: 9999px;
+  background: var(--color-gbc-yellow-deep);
+  border: 2px solid var(--color-gbc-yellow-dark);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.3),
+    0 2px 0 rgba(0, 0, 0, 0.15);
+  transform: rotate(-25deg);
+}
+
+/* Dotted speaker grille, curved to follow the shell's corner */
+.gbc-speaker {
+  width: 4.5rem;
+  height: 4.5rem;
+  background-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.35) 0 1.5px,
+    transparent 2px
+  );
+  background-size: 9px 9px;
+  border-radius: 0 0 2.25rem 0;
+}
+
+/* Pokédex entry divider: dotted line with squares */
+.gbc-dex-rule {
+  height: 8px;
+  background:
+    repeating-linear-gradient(
+        90deg,
+        var(--color-gbc-lcd-ink) 0 6px,
+        transparent 6px 24px
+      )
+      center / 100% 8px no-repeat,
+    repeating-linear-gradient(
+        90deg,
+        var(--color-gbc-lcd-ink) 0 2px,
+        transparent 2px 4px
+      )
+      center / 100% 2px no-repeat;
+}
+
+/* ───────── Shared pieces used by other pages ───────── */
+
+/* Content card: hard offset shadow, bottom-right curve like the shell */
+.dex-card {
+  background: var(--color-panel);
+  border: 3px solid var(--color-gbc-bezel);
+  border-radius: 0.5rem 0.5rem 1.5rem 0.5rem;
+  box-shadow: 4px 4px 0 var(--color-gbc-yellow-deep);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+}
+
+.dex-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--color-gbc-yellow-deep);
+}
+
+/* Dark LCD panel (unchanged look, bezel-colored border) */
+.dex-screen {
+  background: var(--color-screen);
+  border: 4px solid var(--color-gbc-bezel);
+  border-radius: 0.5rem;
+  box-shadow:
+    inset 0 0 12px rgba(0, 0, 0, 0.6),
+    0 6px 14px -6px rgba(0, 0, 0, 0.5);
+}
+
+/* ───────── Animations ───────── */
+
+@keyframes blip {
+  0%,
+  100% {
+    opacity: 0.4;
+    box-shadow: 0 0 2px currentColor;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 8px 2px currentColor;
+  }
+}
+
+.animate-blip {
+  animation: blip 2.2s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-bob {
+  animation: bob 4s ease-in-out infinite;
+}
+
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.animate-scan {
+  animation: scan 3s linear infinite;
+}
+
+/* Blinking terminal cursor */
+@keyframes cursor {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-cursor {
+  animation: cursor 1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-blip,
+  .animate-bob,
+  .animate-scan,
+  .animate-cursor {
+    animation: none;
+  }
+}
+
+/* Animated GIF background sprites aren't CSS-driven, so disabling the
+   container's keyframe animation isn't enough to respect reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .pokemon-backdrop {
+    display: none;
+  }
+}
+
+::selection {
+  background: var(--color-gbc-yellow);
+  color: var(--color-gbc-ink);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gbc-yellow-deep);
+  border-radius: 999px;
 }
