@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
-import Experience from "@/components/screens/ExperienceScreen";
+import ExperienceScreen from "@/components/screens/ExperienceScreen";
 
-export const metadata: Metadata = {
-  title: "Our Story — Jack Chen",
-};
+export const metadata: Metadata = { title: "Journey — Jack Chen" };
 
 export default function ExperiencePage() {
-  return <Experience />;
+  return <ExperienceScreen />;
 }

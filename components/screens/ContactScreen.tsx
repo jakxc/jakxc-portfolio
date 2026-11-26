@@ -90,7 +90,7 @@ export default function Contact() {
             </div>
 
             {/* Bottom strip */}
-            <div className="mt-4 border-y-2 border-black px-4 py-3 font-dex text-xs text-black sm:text-sm">
+            <div className="mt-4 border-y-2 border-black px-2 py-3 font-dex text-xs text-black sm:text-sm">
               <div className="flex items-center gap-2">
                 <span aria-hidden="true">&gt;</span>
                 <div className="inline-flex">

@@ -1,54 +1,87 @@
-import StatusLights from "../StatusLights";
+import Image from "next/image";
 import { experience } from "@/data/portfolio";
 
-export default function Experience() {
+// PokeAPI item used as the icon. The standard Poké Ball is the one that still
+// reads clearly in black and white (Great/Ultra/Master Ball turn muddy).
+const BALL = "poke-ball";
+
+async function fetchBallSprite(): Promise<string | null> {
+  try {
+    const res = await fetch(`https://pokeapi.co/api/v2/item/${BALL}`, {
+      // Item data almost never changes, and PokeAPI asks clients to cache
+      next: { revalidate: 60 * 60 * 24 * 30 },
+    });
+    if (!res.ok) return null;
+
+    const data: { sprites?: { default?: string | null } } = await res.json();
+    return data.sprites?.default ?? null;
+  } catch {
+    return null; // PokeAPI unreachable: render the page without icons
+  }
+}
+
+export default async function ExperienceScreen() {
+  const ballSrc = await fetchBallSprite();
+
   return (
-    <section className="relative flex flex-1 flex-col justify-center overflow-hidden bg-(--color-dex-red) px-6 py-20">
-      <StatusLights />
+    <div className="text-black">
+      <h1 className="font-dex text-xs sm:text-sm">&gt; EVOLUTION LINE</h1>
+      <p className="mt-2 text-[10px] leading-relaxed sm:text-xs">
+        My journey so far — each role a new evolution.
+      </p>
 
-      <div className="relative mx-auto w-full max-w-4xl">
-        <div className="mb-12 flex flex-col items-center gap-3 text-center">
-          <h1 className="font-display text-3xl font-bold text-(--color-cream) sm:text-4xl">
-            Evolution Line
-          </h1>
-          <p className="max-w-xl text-sm text-(--color-cream)/80 sm:text-base">
-            My journey so far — each role a new evolution.
-          </p>
-        </div>
+      {/* ml-3 keeps the number squares inside the scroll area */}
+      <ol className="mt-5 ml-3 flex flex-col gap-7 border-l-2 border-black pl-6">
+        {experience.map((item, i) => (
+          <li key={item.id} className="relative">
+            <span
+              className="absolute top-0 -left-[2.3rem] flex h-6 w-6 items-center justify-center bg-black font-dex text-[10px] text-white"
+              aria-hidden="true"
+            >
+              {i + 1}
+            </span>
 
-        <ol className="relative flex flex-col gap-10 border-l-4 border-(--color-yellow)/70 pl-8">
-          {experience.map((item, i) => (
-            <li key={item.id} className="relative">
-              <span
-                className="dex-led absolute -left-[2.7rem] top-1 flex h-7 w-7 items-center justify-center bg-(--color-cyan) font-dex text-xs text-(--color-dex-red-dark)"
-                aria-hidden="true"
-              >
-                {i + 1}
-              </span>
-              <div className="dex-card p-6">
-                <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
-                  <h2 className="font-display text-xl font-bold text-(--color-ink)">
-                    {item.role} · {item.company}
-                  </h2>
-                  <span className="font-dex text-sm text-(--color-dex-red-deep)">
-                    {item.period}
-                  </span>
-                </div>
-                <div className="dex-screen mb-3 p-4">
-                  <p className="text-sm text-(--color-screen-light) sm:text-base">
-                    {item.description}
-                  </p>
-                </div>
-                <ul className="list-inside list-disc space-y-1 text-sm text-(--color-ink)/80">
-                  {item.highlights.map((h) => (
-                    <li key={h}>{h}</li>
-                  ))}
-                </ul>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
+            <div className="flex items-start justify-between gap-3">
+              <h2 className="font-dex text-xs leading-snug sm:text-sm">
+                {item.role}
+              </h2>
+              {ballSrc && (
+                <Image
+                  src={ballSrc}
+                  alt=""
+                  width={30}
+                  height={30}
+                  unoptimized
+                  className="shrink-0 grayscale contrast-150 [image-rendering:pixelated]"
+                />
+              )}
+            </div>
+
+            <p className="mt-1 font-dex text-[10px] sm:text-xs">
+              {item.company}
+            </p>
+            <p className="mt-2 w-fit bg-black px-2 py-0.5 font-dex text-[10px] text-white">
+              {item.period}
+            </p>
+
+            <p className="mt-3 border-2 border-black p-3 text-[10px] leading-relaxed sm:text-xs">
+              {item.description}
+            </p>
+
+            <ul className="mt-3 space-y-1.5 text-[10px] leading-relaxed sm:text-xs">
+              {item.highlights.map((h) => (
+                <li key={h} className="flex gap-2">
+                  <span
+                    className="mt-[0.35rem] h-1.5 w-1.5 shrink-0 bg-black"
+                    aria-hidden="true"
+                  />
+                  {h}
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ol>
+    </div>
   );
 }

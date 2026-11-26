@@ -2,7 +2,7 @@
 // This is the single source of truth consumed by every section component.
 
 export const profile = {
-  name: "Jack Chen",
+  name: "Jakxc",
   role: "Software Developer",
   tagline: "“Yesterday is history, tomorrow is a mystery, but today is a gift. That is why it is called the present.” \n- Master Oogway",
   about:
@@ -30,7 +30,7 @@ export const skills: { category: string; items: string[] }[] = [
   },
   {
     category: "Tools",
-    items: ["Git", "Docker", "AWS", "Figma", "AI Tools"],
+    items: ["Git", "Docker", "AWS", "Figma", "AI Tools (Claude)"],
   },
 ];
 
